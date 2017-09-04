@@ -11,7 +11,7 @@ import datetime
 import time
 
 #-----------------------------------------------------------------------
-# load our API credentials 
+# load our API credentials
 #-----------------------------------------------------------------------
 config = {}
 execfile("/home/pi/git_code/python-twitter-examples/config.py", config)
@@ -61,7 +61,7 @@ for tweet in tweet_iter:
 	# do we have any new tweet commands we have not dispatched?
 	#-----------------------------------------------------------------------
 	cmd_check = tweet["text"].encode("ascii", "ignore")
-	
+
 	print "tweet to check: %s" % cmd_check
 
 	if cmd_post in cmd_check:
@@ -80,7 +80,8 @@ for tweet in tweet_iter:
 			obj = HTU21D()
 			tweet_text = "Temp: %.2fF -- Humidity: %.2f%%rH" % (obj.read_tmperature(), obj.read_humidity())
 			results = twitter.statuses.update(status = tweet_text)
-			#tweet.detroy()
+            # delete command tweet
+			twitter.statuses.destroy._id(_id = status["id"])
 		except Exception, e:
 			print " - failed (maybe a duplicate?): %s" % e
 	else:
