@@ -81,7 +81,8 @@ for tweet in tweet_iter:
 			tweet_text = "Temp: %.2fF -- Humidity: %.2f%%rH" % (obj.read_tmperature(), obj.read_humidity())
 			results = twitter.statuses.update(status = tweet_text)
             # delete command tweet
-			twitter.statuses.destroy._id(_id = tweet["id"])
+			destroy_status = twitter.statuses.destroy._id(_id = tweet["id"])
+            print "just destroyed: %s -- %s" % (destroy_status["text"], destroy_status["id_str"])
 		except Exception, e:
 			print " - failed (maybe a duplicate?): %s" % e
 	else:
