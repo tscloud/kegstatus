@@ -33,19 +33,6 @@ cmd_post = "posttemp"
 sleep_time = 5
 
 #-----------------------------------------------------------------------
-# post a new status
-# twitter API docs: https://dev.twitter.com/rest/reference/post/statuses/update
-#-----------------------------------------------------------------------
-#obj = HTU21D()
-#tweet_text = "Temp: %.2fF -- Humidity: %.2f%%rH" % (obj.read_tmperature(), obj.read_humidity())
-#results = twitter.statuses.update(status = tweet_text)
-#print "updated status: %s" % tweet_text
-
-# timestamp of last performed command
-#  set initially to startup time
-last_cmd_ts = datetime.datetime.now()
-
-#-----------------------------------------------------------------------
 # iterate over tweets matching this filter text
 #-----------------------------------------------------------------------
 tweet_iter = stream.user()
@@ -67,10 +54,6 @@ for tweet in tweet_iter:
 	if cmd_post in cmd_check:
 		# reset time last command was performed
 		print "---posting temp/humidity"
-		#print "tweet timestamp: %s" % tweet_ts
-		#print "time last command perfomed: %s" % last_cmd_ts
-		# reset last command time
-		#last_cmd_ts = time.time()
 
 		#-----------------------------------------------------------------------
 		# post temp/humidity.
@@ -79,10 +62,14 @@ for tweet in tweet_iter:
 		try:
 			obj = HTU21D()
 			tweet_text = "Temp: %.2fF -- Humidity: %.2f%%rH" % (obj.read_tmperature(), obj.read_humidity())
+			#-----------------------------------------------------------------------
+			# post a new status
+			# twitter API docs: https://dev.twitter.com/rest/reference/post/statuses/update
+			#-----------------------------------------------------------------------
 			results = twitter.statuses.update(status = tweet_text)
-            # delete command tweet
+			# delete command tweet
 			destroy_status = twitter.statuses.destroy._id(_id = tweet["id"])
-            print "just destroyed: %s -- %s" % (destroy_status["text"], destroy_status["id_str"])
+			print "just destroyed: %s -- %s" % (destroy_status["text"], destroy_status["id_str"])
 		except Exception, e:
 			print " - failed (maybe a duplicate?): %s" % e
 	else:
