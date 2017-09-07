@@ -61,7 +61,7 @@ for tweet in tweet_iter:
 		#-----------------------------------------------------------------------
 		try:
 			obj = HTU21D()
-			tweet_text = "Temp: %.2fF -- Humidity: %.2f%%rH" % (obj.read_tmperature(), obj.read_humidity())
+			tweet_text = "Kegstatus -- Temp: %.2fF -- Humidity: %.2f%%rH" % (obj.read_tmperature(), obj.read_humidity())
 			#-----------------------------------------------------------------------
 			# post a new status
 			# twitter API docs: https://dev.twitter.com/rest/reference/post/statuses/update
