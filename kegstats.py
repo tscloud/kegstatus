@@ -22,7 +22,7 @@ try:
 		# convert to F
 		bmp_temp = (pres_sensor.read_temperature() * 9)/5 + 32
 
-		ts = timestamp = int(time.time())
+		ts = int(time.time())
 		temp = temp_sensor.read_tmperature()
 		humidity = temp_sensor.read_humidity()
 		pressure = pres_sensor.read_pressure()
