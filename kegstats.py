@@ -11,7 +11,7 @@ temp_sensor = HTU21D()
 pres_sensor = BMP085.BMP085()
 
 outfile = "outfile.out"
-sleep_value = .1*60
+sleep_value = 1*60
 
 print "starting kegstatus..."
 
@@ -29,7 +29,7 @@ try:
 
 		outline = "%d,%.2f,%.2f,%.2f,%.2f\n" % (ts, temp, bmp_temp, humidity, pressure)
 		f.write(outline)
-		#print outline
+		print outline
 
 		# sleep for a while
 		time.sleep(sleep_value)

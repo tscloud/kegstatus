@@ -18,8 +18,8 @@ def main():
     access_token = 'W-PWCPYb80UAAAAAAAABTlqDbTSN9i-JpuldCmGGUgurUhGQo8Leq83agDQzqUyj'
     transferData = TransferData(access_token)
 
-    file_from = 'test.txt'
-    file_to = '/test_dropbox/test.txt'  # The full path to upload the file to, including the file name
+    file_from = './outfile.out'
+    file_to = '/kegstatus/outfile.out'  # The full path to upload the file to, including the file name
 
     # API v2
     transferData.upload_file(file_from, file_to)
