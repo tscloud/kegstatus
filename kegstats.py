@@ -3,8 +3,13 @@
 # -- poll to get keg stats to write to file
 
 from HTU21DF_ADMINCK import HTU21D
+from dropboxupload import TransferData
 import Adafruit_BMP.BMP085 as BMP085
 import time
+
+# --load our API credentials
+config = {}
+execfile("/home/pi/git_code/python-twitter-examples/config.py", config)
 
 # -- create sensor read oject
 temp_sensor = HTU21D()
@@ -36,6 +41,21 @@ try:
 
 except KeyboardInterrupt:
 	print "User Cancelled (Ctrl C)"
+	print "uploading file..."
+
+    #----add access_token to above config file
+    #access_token = 'W-PWCPYb80UAAAAAAAABTlqDbTSN9i-JpuldCmGGUgurUhGQo8Leq83agDQzqUyj'
+    access_token = config["access_token"]
+
+    transferData = TransferData(access_token)
+
+    file_from = './outfile.out'
+    file_to = '/kegstatus/outfile.out'  # The full path to upload the file to, including the file name
+
+    # API v2
+    transferData.upload_file(file_from, file_to)
+
+    print "...upload complete"
 
 except:
 	print "Unexpected error - ", sys.exc_info()[0], sys.exc_info()[1]

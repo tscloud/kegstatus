@@ -18,11 +18,13 @@ twitter = Twitter(auth = auth)
 stream = TwitterStream(domain = "userstream.twitter.com", auth = auth, secure = True)
 
 # command list
-cmd_post = "posttemp"
+CMD_POST = "posttemp"
+CMD_START_KEG = "startkeg"
+CMD_STOP_KEG = "stopkeg"
 
 # --sleep for this number of seconds between tweets, to ensure we
 # --don't flood
-sleep_time = 5
+SLEEP_TIME = 5
 
 # -- iterate over tweets matching this filter text
 tweet_iter = stream.user()
@@ -41,8 +43,7 @@ try:
 		# -- create sensor read oject
 		obj = HTU21D()
 
-		if cmd_post in cmd_check:
-			# reset time last command was performed
+		if CMD_POST in cmd_check:
 			print "---posting temp/humidity"
 
 			# -- post temp/humidity.
@@ -59,17 +60,21 @@ try:
 				print "just destroyed: %s -- %s" % (destroy_status["text"], destroy_status["id_str"])
 			except Exception, e:
 				print " - failed (maybe a duplicate?): %s" % e
+		elif CMD_START_KEG in cmd_check:
+			print "--starting kegstatus.py"
+		elif CMD_STOP_KEG in cmd_check:
+			print "--stopping kegstatus.py"
 		else:
-			print "check found no command"
+			print "no command found"
 
-		time.sleep(sleep_time)
+		time.sleep(SLEEP_TIME)
 
 except KeyboardInterrupt:
 	print "User Cancelled (Ctrl C)"
 
 except:
 	print "Unexpected error - ", sys.exc_info()[0], sys.exc_info()[1]
-	#print traceback.format_exc()
+	print traceback.format_exc()
 	raise
 
 finally:

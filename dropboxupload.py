@@ -16,7 +16,14 @@ class TransferData:
             dbx.files_upload(f.read(), file_to, mode=dropbox.files.WriteMode('overwrite', None), autorename=False, client_modified=None, mute=False)
 
 def main():
-    access_token = 'W-PWCPYb80UAAAAAAAABTlqDbTSN9i-JpuldCmGGUgurUhGQo8Leq83agDQzqUyj'
+    # --load our API credentials
+    config = {}
+    execfile("/home/pi/git_code/python-twitter-examples/config.py", config)
+
+    #----TODO: add access_token to above config file
+    #access_token = 'W-PWCPYb80UAAAAAAAABTlqDbTSN9i-JpuldCmGGUgurUhGQo8Leq83agDQzqUyj'
+    access_token = config["access_token"]
+
     transferData = TransferData(access_token)
 
     file_from = './outfile.out'
