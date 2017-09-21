@@ -27,39 +27,50 @@ sleep_time = 5
 # -- iterate over tweets matching this filter text
 tweet_iter = stream.user()
 
-for tweet in tweet_iter:
-	# -- check whether this is a valid tweet
-	if "entities" not in tweet:
-		continue
+try:
+	for tweet in tweet_iter:
+		# -- check whether this is a valid tweet
+		if "entities" not in tweet:
+			continue
 
-	# -- do we have any new tweet commands we have not dispatched?
-	cmd_check = tweet["text"].encode("ascii", "ignore")
+		# -- do we have any new tweet commands we have not dispatched?
+		cmd_check = tweet["text"].encode("ascii", "ignore")
 
-	print "tweet to check: %s" % cmd_check
+		print "tweet to check: %s" % cmd_check
 
-	# -- create sensor read oject
-	obj = HTU21D()
+		# -- create sensor read oject
+		obj = HTU21D()
 
-	if cmd_post in cmd_check:
-		# reset time last command was performed
-		print "---posting temp/humidity"
+		if cmd_post in cmd_check:
+			# reset time last command was performed
+			print "---posting temp/humidity"
 
-		# -- post temp/humidity.
-		# -- use try/except to catch potential failures.
-		try:
-			tweet_text = "Kegstatus -- Temp: %.2fF -- Humidity: %.2f%%rH" % (obj.read_tmperature(), obj.read_humidity())
-			
-			# -- post a new status
-			# -- twitter API docs: https://dev.twitter.com/rest/reference/post/statuses/update
-			results = twitter.statuses.update(status = tweet_text)
-			
-			# delete command tweet
-			destroy_status = twitter.statuses.destroy._id(_id = tweet["id"])
-			print "just destroyed: %s -- %s" % (destroy_status["text"], destroy_status["id_str"])
-		except Exception, e:
-			print " - failed (maybe a duplicate?): %s" % e
-	else:
-		print "check found no command"
+			# -- post temp/humidity.
+			# -- use try/except to catch potential failures.
+			try:
+				tweet_text = "Kegstatus -- Temp: %.2fF -- Humidity: %.2f%%rH" % (obj.read_tmperature(), obj.read_humidity())
 
-	time.sleep(sleep_time)
+				# -- post a new status
+				# -- twitter API docs: https://dev.twitter.com/rest/reference/post/statuses/update
+				results = twitter.statuses.update(status = tweet_text)
 
+				# delete command tweet
+				destroy_status = twitter.statuses.destroy._id(_id = tweet["id"])
+				print "just destroyed: %s -- %s" % (destroy_status["text"], destroy_status["id_str"])
+			except Exception, e:
+				print " - failed (maybe a duplicate?): %s" % e
+		else:
+			print "check found no command"
+
+		time.sleep(sleep_time)
+
+except KeyboardInterrupt:
+	print "User Cancelled (Ctrl C)"
+
+except:
+	print "Unexpected error - ", sys.exc_info()[0], sys.exc_info()[1]
+	#print traceback.format_exc()
+	raise
+
+finally:
+	print "finishing up..."
