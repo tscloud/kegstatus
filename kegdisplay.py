@@ -5,10 +5,17 @@ import Adafruit_BMP.BMP085 as BMP085
 import time
 import math
 import Adafruit_SSD1306
+import RPi.GPIO as GPIO
 
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+
+def callback_rising(channel):
+	"""
+	callback when button pressed
+	"""
+	print '...RISING callback called on channel %s' % channel
 
 def padForCenter(dispText, font):
 	"""
@@ -76,7 +83,14 @@ font = ImageFont.truetype('visitor1.ttf', 14)
 topfont = ImageFont.truetype('visitor1.ttf', 18)
 bottomfont = ImageFont.truetype('visitor1.ttf', 48)
 
+# GPIO setup
+#GPIO.setmode(GPIO.BOARD)
+# Pin button tied to
+pin_in = 12
+GPIO.setup(pin_in, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 try:
+	GPIO.add_event_detect(pin_in, GPIO.RISING, callback=callback_rising, bouncetime=300)  # add rising edge detection on a channel
 	while True:
 		# convert to F
 		bmp_temp = (pres_sensor.read_temperature() * 9)/5 + 32
@@ -105,3 +119,8 @@ except KeyboardInterrupt:
 	# Clear display.
 	disp.clear()
 	disp.display()
+
+finally:
+	GPIO.cleanup()
+	print "\nBye"
+
