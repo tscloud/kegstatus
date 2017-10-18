@@ -11,21 +11,39 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
-# class fro text processing
+# class for text processing
 class TextProcessor():
 
-	def __init__(self, dispText=None, font=None):
+	def __init__(self, aDispText='Welcome', aFontName='visitor1.ttf', aFontSize=8):
 		"""
 		Subtract screen width by provided text, halve & return int part
 		 if this neg # -> change font
 		"""
-		self.font = font
+		# the font to be used
+		self.font = ImageFont.truetype(aFontName, aFontSize)
+		# the font name & size to be used
+		self.fontName = aFontName
+		self.fontSize = aFontSize
+		# the padding to center text
+		self.pad = 0
 
-		textWidth = draw.textsize(dispText, font=self.font)[0]
-		pad = (width - textWidth)/2
+		determineFont(aDispText)
+
+	def determineFont(aDispTextRecur):
+		"""
+		call recursively to determine font size
+		"""
+		textWidth = draw.textsize(aDispTextRecur, font=self.font)[0]
+		#width is width of screen - global
+		self.pad = (width - textWidth)/2
 
 		if(pad < 0):
-			
+			# reduce font size
+			self.fontSize -= 2
+			self.font = ImageFont.truetype(self.fontName, self.fontSize)
+
+			# recursive call
+			determineFont(aDispTextRecur)
 
 
 def callback_rising(channel):
@@ -102,11 +120,12 @@ x = 0
 
 # Alternatively load a TTF font.  Make sure the .ttf font file is in the same directory as the python script!
 # Some other nice fonts to try: http://www.dafont.com/bitmap.php
-#font = ImageFont.truetype('Minecraftia.ttf', 8) visitor1.ttf
-font = ImageFont.truetype('visitor1.ttf', 14)
+#font = ImageFont.truetype('Minecraftia.ttf', 8)
+#font = ImageFont.truetype('visitor1.ttf', 14)
 # -- top row of 16 px different colour
-topfont = ImageFont.truetype('visitor1.ttf', 18)
-bottomfont = ImageFont.truetype('visitor1.ttf', 38)
+fontName = 'visitor1.ttf'
+topfontSize = 18
+bottomfontSize = 38
 
 # GPIO setup
 #GPIO.setmode(GPIO.BOARD)
@@ -141,8 +160,13 @@ try:
 			title = "Pressure"
 			data = "%.2f" % pressure
 
-		draw.text((padForCenter(title, topfont), top), title, font=topfont, fill=255)
-		draw.text((padForCenter(data, bottomfont), top+firstrow), data, font=bottomfont, fill=255)
+		textProc = TextProcessor(title, fontName, topfontSize)
+		#draw.text((padForCenter(title, topfont), top), title, font=topfont, fill=255)
+		draw.text((textProc.pad, top), title, font=textProc.font, fill=255)
+
+		textProc = TextProcessor(data, aFontName, bottomfontSize)
+		#draw.text((padForCenter(data, bottomfont), top+firstrow), data, font=bottomfont, fill=255)
+		draw.text((textProc.pad, top+firstrow), data, font=textProc.font, fill=255)
 
 		# Display image.
 		disp.image(image)
