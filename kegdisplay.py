@@ -27,9 +27,9 @@ class TextProcessor():
 		# the padding to center text
 		self.pad = 0
 
-		determineFont(aDispText)
+		self.determineFont(aDispText)
 
-	def determineFont(aDispTextRecur):
+	def determineFont(self, aDispTextRecur):
 		"""
 		call recursively to determine font size
 		"""
@@ -37,13 +37,13 @@ class TextProcessor():
 		#width is width of screen - global
 		self.pad = (width - textWidth)/2
 
-		if(pad < 0):
+		if(self.pad < 0):
 			# reduce font size
 			self.fontSize -= 2
 			self.font = ImageFont.truetype(self.fontName, self.fontSize)
 
 			# recursive call
-			determineFont(aDispTextRecur)
+			self.determineFont(aDispTextRecur)
 
 
 def callback_rising(channel):
@@ -164,7 +164,7 @@ try:
 		#draw.text((padForCenter(title, topfont), top), title, font=topfont, fill=255)
 		draw.text((textProc.pad, top), title, font=textProc.font, fill=255)
 
-		textProc = TextProcessor(data, aFontName, bottomfontSize)
+		textProc = TextProcessor(data, fontName, bottomfontSize)
 		#draw.text((padForCenter(data, bottomfont), top+firstrow), data, font=bottomfont, fill=255)
 		draw.text((textProc.pad, top+firstrow), data, font=textProc.font, fill=255)
 
