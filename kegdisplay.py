@@ -122,8 +122,10 @@ x = 0
 # Some other nice fonts to try: http://www.dafont.com/bitmap.php
 #font = ImageFont.truetype('Minecraftia.ttf', 8)
 #font = ImageFont.truetype('visitor1.ttf', 14)
+#font = ImageFont.truetype('pixelmix.ttf', 14)
 # -- top row of 16 px different colour
-fontName = 'visitor1.ttf'
+bottomfontName = 'visitor1.ttf'
+topfontName = 'visitor1.ttf'
 topfontSize = 18
 bottomfontSize = 38
 
@@ -160,11 +162,11 @@ try:
 			title = "Pressure"
 			data = "%.2f" % pressure
 
-		textProc = TextProcessor(title, fontName, topfontSize)
+		textProc = TextProcessor(title, topfontName, topfontSize)
 		#draw.text((padForCenter(title, topfont), top), title, font=topfont, fill=255)
 		draw.text((textProc.pad, top), title, font=textProc.font, fill=255)
 
-		textProc = TextProcessor(data, fontName, bottomfontSize)
+		textProc = TextProcessor(data, bottomfontName, bottomfontSize)
 		#draw.text((padForCenter(data, bottomfont), top+firstrow), data, font=bottomfont, fill=255)
 		draw.text((textProc.pad, top+firstrow), data, font=textProc.font, fill=255)
 
