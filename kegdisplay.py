@@ -11,11 +11,32 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
+# class fro text processing
+class TextProcessor():
+
+	def __init__(self, dispText=None, font=None):
+		"""
+		Subtract screen width by provided text, halve & return int part
+		 if this neg # -> change font
+		"""
+		self.font = font
+
+		textWidth = draw.textsize(dispText, font=self.font)[0]
+		pad = (width - textWidth)/2
+
+		if(pad < 0):
+			
+
+
 def callback_rising(channel):
 	"""
 	callback when button pressed
 	"""
 	print '...RISING callback called on channel %s' % channel
+	global mode
+	mode += 1
+	if(mode > max_modes):
+		mode = 0
 
 def padForCenter(dispText, font):
 	"""
@@ -31,6 +52,10 @@ def padForCenter(dispText, font):
 	print "pad: %.2f" % pad
 
 	return pad
+
+# this is going to determine what we display
+mode = 0
+max_modes = 2
 
 # -- create sensor read oject
 temp_sensor = HTU21D()
@@ -81,12 +106,15 @@ x = 0
 font = ImageFont.truetype('visitor1.ttf', 14)
 # -- top row of 16 px different colour
 topfont = ImageFont.truetype('visitor1.ttf', 18)
-bottomfont = ImageFont.truetype('visitor1.ttf', 48)
+bottomfont = ImageFont.truetype('visitor1.ttf', 38)
 
 # GPIO setup
 #GPIO.setmode(GPIO.BOARD)
+print "GPIO.BOARD: %s" % GPIO.BOARD
+print "GPIO.BCM: %s" % GPIO.BCM
+print "GPIO mode: %s" % GPIO.getmode()
 # Pin button tied to
-pin_in = 12
+pin_in = 18
 GPIO.setup(pin_in, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 try:
@@ -103,8 +131,16 @@ try:
 		pressure = pres_sensor.read_pressure()
 
 		# write text
-		title = "Humidity"
-		data = "%.2f" % humidity
+		if(mode == 0):
+			title = "Humidity"
+			data = "%.2f" % humidity
+		elif(mode == 1):
+			title = "Temperature"
+			data = "%.2f" % temp
+		elif(mode == 2):
+			title = "Pressure"
+			data = "%.2f" % pressure
+
 		draw.text((padForCenter(title, topfont), top), title, font=topfont, fill=255)
 		draw.text((padForCenter(data, bottomfont), top+firstrow), data, font=bottomfont, fill=255)
 
