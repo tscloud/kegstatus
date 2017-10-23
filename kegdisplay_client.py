@@ -12,22 +12,27 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 # create a subclass and override the handler methods
-class MyHTMLParser(HTMLParser):
-	self.humidity_text = "Humidity"
-	self.temp_text = "Temperature"
-	self.press_text = "Pressure"
-
-	def handle_starttag(self, tag, attrs):
-		print "Encountered a start tag:", tag
-
-	def handle_endtag(self, tag):
-		print "Encountered an end tag :", tag
-
+class SensorHTMLParser(HTMLParser):
 	def handle_data(self, data):
-		print "Encountered some data  :", data
-		if(self.humidity in data):
-			split_humidity = data.split(data)
-			print split_humidity
+		self.humidity_text = "Humidity"
+		self.temp_text = "Temperature"
+		self.press_text = "Pressure"
+		self.chaff = ": "
+
+		#print "Encountered some data  :", data
+		
+		if(self.humidity_text in data):
+			split_humidity = data.split(self.humidity_text)
+			self.humidity = (split_humidity[1].split(self.chaff))[1]
+			#print self.humidity
+		elif(self.temp_text in data):
+			split_temp = data.split(self.temp_text)
+			self.temp = (split_temp[1].split(self.chaff))[1]
+			#print self.temp
+		elif(self.press_text in data):
+			split_press = data.split(self.press_text)
+			self.press = (split_press[1].split(self.chaff))[1]
+			#print self.press
 
 # class for text processing
 class TextProcessor():
@@ -62,7 +67,6 @@ class TextProcessor():
 
 			# recursive call
 			self.determineFont(aDispTextRecur)
-
 
 def callback_rising(channel):
 	"""
@@ -164,23 +168,23 @@ try:
 		# <<< this is used if obtaning data from remote sensor
 		response = urllib2.urlopen('http://rpi3:8088/')
 		html = response.read()
-		print html
+		#print html
 		# >>>
 
 		# instantiate the parser and fed it some HTML
-		parser = MyHTMLParser()
+		parser = SensorHTMLParser()
 		parser.feed(html)
 
 		# write text
 		if(mode == 0):
-			title = "Humidity"
-			data = "%.2f" % humidity
+			title = parser.humidity_text
+			data = "%.2f" % float(parser.humidity)
 		elif(mode == 1):
-			title = "Temperature"
-			data = "%.2f" % temp
+			title = parser.temp_text
+			data = "%.2f" % float(parser.temp)
 		elif(mode == 2):
-			title = "Pressure"
-			data = "%.2f" % pressure
+			title = parser.press_text
+			data = "%.2f" % float(parser.press)
 
 		textProc = TextProcessor(title, topfontName, topfontSize)
 		#draw.text((padForCenter(title, topfont), top), title, font=topfont, fill=255)
