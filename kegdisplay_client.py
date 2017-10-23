@@ -1,17 +1,28 @@
 #!/usr/bin/python
 
-from HTU21DF_ADMINCK import HTU21D
-import Adafruit_BMP.BMP085 as BMP085
-from Adafruit_BME280 import *
 import time
 import math
 import Adafruit_SSD1306
 import RPi.GPIO as GPIO
 import urllib2
 
+from HTMLParser import HTMLParser
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+
+# create a subclass and override the handler methods
+class MyHTMLParser(HTMLParser):
+	def handle_starttag(self, tag, attrs):
+		print "Encountered a start tag:", tag
+
+	def handle_endtag(self, tag):
+		print "Encountered an end tag :", tag
+
+	def handle_data(self, data):
+		print "Encountered some data  :", data
+		if("Humidity" in data):
+			
 
 # class for text processing
 class TextProcessor():
@@ -76,11 +87,6 @@ def padForCenter(dispText, font):
 # this is going to determine what we display
 mode = 0
 max_modes = 2
-
-# -- create sensor read oject
-#temp_sensor = HTU21D()
-#pres_sensor = BMP085.BMP085()
-#sensor = BME280(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
 
 # Raspberry Pi pin configuration:
 RST = None     # on the PiOLED this pin isnt used
@@ -150,20 +156,15 @@ try:
 		# Draw a black filled box to clear the image.
 		draw.rectangle((0,0,width,height), outline=0, fill=0)
 
-		# <<< this is used if obtaining data from local sensor
-		##temp = temp_sensor.read_tmperature()
-		##humidity = temp_sensor.read_humidity()
-		##pressure = pres_sensor.read_pressure()
-		#temp = sensor.read_temperature_f()
-		#humidity = sensor.read_humidity()
-		#pressure = sensor.read_pressure() / 100
-		# >>>
-
 		# <<< this is used if obtaning data from remote sensor
 		response = urllib2.urlopen('http://rpi3:8088/')
 		html = response.read()
 		print html
 		# >>>
+
+		# instantiate the parser and fed it some HTML
+		parser = MyHTMLParser()
+		parser.feed(html)
 
 		# write text
 		if(mode == 0):
