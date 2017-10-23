@@ -13,6 +13,10 @@ from PIL import ImageFont
 
 # create a subclass and override the handler methods
 class MyHTMLParser(HTMLParser):
+	self.humidity_text = "Humidity"
+	self.temp_text = "Temperature"
+	self.press_text = "Pressure"
+
 	def handle_starttag(self, tag, attrs):
 		print "Encountered a start tag:", tag
 
@@ -21,8 +25,9 @@ class MyHTMLParser(HTMLParser):
 
 	def handle_data(self, data):
 		print "Encountered some data  :", data
-		if("Humidity" in data):
-			
+		if(self.humidity in data):
+			split_humidity = data.split(data)
+			print split_humidity
 
 # class for text processing
 class TextProcessor():
